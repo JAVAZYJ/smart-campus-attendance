@@ -97,12 +97,12 @@ public class AttendanceStudentRecordDTO implements Serializable {
         studentRecord.setTermId(attendanceStudentRecord.getTermId());
         studentRecord.setClockStartTime(startEndTime.get("min"));
         studentRecord.setClockEndTime(startEndTime.get("max"));
-        //存储考勤类型(0.迟到；1.早退；2.缺勤)
-        if(type.equals("absence")){
+        //存储考勤类型(0.迟到latecomer；1.早退early；2.缺勤absence)
+        if(type.equals("latecomer")){
             studentRecord.setType(0L);
-        }else if(type.equals("latecomer")){
+        }else if(type.equals("early")){
             studentRecord.setType(1L);
-        }else if(type.equals("tardy")){
+        }else if(type.equals("absence")){
             studentRecord.setType(2L);
         }
         studentRecord.setSchoolId(attendanceStudentRecord.getSchoolId());

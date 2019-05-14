@@ -73,9 +73,11 @@ public class AttendanceTeacherRecordDTO  implements Serializable {
         teacherRecord.setCampusId(attendanceTeacherRecord.getCampusId());
         teacherRecord.setClockStartTime(startEndTime.get("min"));
         teacherRecord.setClockEndTime(startEndTime.get("max"));
-        if(type.equals("absence")){
+        if(type.equals("latecomer")){
             teacherRecord.setType(0L);
-        }else if(type.equals("latecomer")){
+        }else if(type.equals("absence")){
+            teacherRecord.setType(2L);
+        }else if(type.equals("early")){
             teacherRecord.setType(1L);
         }
         teacherRecord.setCreateTime(LocalDateTime.now());

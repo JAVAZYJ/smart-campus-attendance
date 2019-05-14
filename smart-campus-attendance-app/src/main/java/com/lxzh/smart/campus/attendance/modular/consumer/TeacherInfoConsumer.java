@@ -15,14 +15,10 @@ public interface TeacherInfoConsumer extends TeacherServiceApi {
 
         @Override
         public TeacherInfoConsumer create(Throwable cause) {
-            return new TeacherInfoConsumer(){
-
+            return new TeacherInfoConsumer() {
                 @Override
                 public TeacherInfoVo getTeacherInfo(Long teacherId) {
-                    TeacherInfoVo teacherInfoVo = new TeacherInfoVo();
-                    teacherInfoVo.setName("张无忌");
-                    teacherInfoVo.setSchoolId(1L);
-                    return teacherInfoVo;
+                    return null;
                 }
 
                 @Override
@@ -31,7 +27,12 @@ public interface TeacherInfoConsumer extends TeacherServiceApi {
                 }
 
                 @Override
-                public List<TeacherInfoVo> getTeacherListByName(String name) {
+                public List<TeacherInfoVo> getTeacherListByName(String name, Long campusId) {
+                    return null;
+                }
+
+                @Override
+                public List<TeacherInfoVo> getTeacherInfoByCampus(Long campusId) {
                     return null;
                 }
             };

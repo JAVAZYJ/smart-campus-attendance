@@ -5,6 +5,7 @@ import com.lxzh.smart.campus.attendance.modular.entity.AttendanceStudentHistory;
 import com.lxzh.smart.campus.attendance.modular.entity.AttendanceTeacherHistory;
 import com.lxzh.smart.campus.attendance.modular.mapper.AttendanceStudentHistoryMapper;
 import com.lxzh.smart.campus.attendance.modular.mapper.AttendanceTeacherHistoryMapper;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -79,6 +80,9 @@ public class AttendanceServiceUtil {
         } else if(latecomer > 0 && absence < 0){
             //归类为迟到
             assignment = "latecomer";
+        }else if(startTime.isAfter(endTime)&& !startTime.isEqual(endTime) && endTime.toString().substring(11, 16).compareTo("18:00") < 0){
+            //早退
+            assignment = "early";
         }
         return assignment;
     }
@@ -101,6 +105,9 @@ public class AttendanceServiceUtil {
         } else if(latecomer > 0 && absence < 0){
             //归类为迟到
             assignment = "latecomer";
+        }else if(timeMap.get("min").isAfter(timeMap.get("max"))&& !timeMap.get("min").isEqual(timeMap.get("max")) && timeMap.get("max").toString().substring(11, 16).compareTo("18:00") < 0){
+            //早退
+            assignment = "early";
         }
         return assignment;
     }

@@ -204,8 +204,8 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
             //根据选择全校或班级进行显示
             if (id == 1) {
                 map.put("全校",attendanceSchool());
-            }else {map.put("班级",attendanceStudent());
-
+            }else {
+                map.put("班级",attendanceStudent());
             }
         }
         return map;
