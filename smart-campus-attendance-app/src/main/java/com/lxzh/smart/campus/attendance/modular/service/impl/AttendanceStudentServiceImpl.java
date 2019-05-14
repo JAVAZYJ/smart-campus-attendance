@@ -185,6 +185,7 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
                             //判断打卡学生打卡的状态
                             String type = AttendanceServiceUtil.attendanceStudentType(clockInVO.getNumber(),historyMapper);
                             //数据进行转换
+
                             AttendanceStudentRecord updateRecord = AttendanceStudentRecordDTO.updateData(record, map ,type,studentInfo.getGradeId());
                             return recordMapper.update(updateRecord, queryWrapper);
                         }
