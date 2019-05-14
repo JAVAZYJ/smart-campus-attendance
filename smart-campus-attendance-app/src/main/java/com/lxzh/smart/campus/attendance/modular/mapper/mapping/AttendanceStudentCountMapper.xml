@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzh.smart.campus.attendance.modular.mapper.AttendanceStudentCountMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lxzh.smart.campus.attendance.modular.entity.AttendanceStudentCount">
+        <id column="id" property="id" />
+        <result column="class_id" property="classId" />
+        <result column="class_name" property="className" />
+        <result column="time" property="time" />
+        <result column="late" property="late" />
+        <result column="leave_early" property="leaveEarly" />
+        <result column="absence" property="absence" />
+        <result column="campus_id" property="campusId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, class_name, time, late, leave_early, absence, campus_id, class_id
+    </sql>
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzh.smart.campus.attendance.modular.mapper.AttendanceStudentRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lxzh.smart.campus.attendance.modular.entity.AttendanceStudentRecord">
+        <result column="id" property="id" />
+        <result column="student_number" property="studentNumber" />
+        <result column="grade_id" property="gradeId" />
+        <result column="class_id" property="classId" />
+        <result column="term_id" property="termId" />
+        <result column="clock_start_time" property="clockStartTime" />
+        <result column="clock_end_time" property="clockEndTime" />
+        <result column="type" property="type" />
+        <result column="campus_id" property="campusId" />
+        <result column="school_id" property="schoolId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        `id`, `student_number`, `grade_id`, `class_id`, `term_id`, `clock_start_time`, `clock_end_time`, `type`, `campus_id`, `school_id`,  `create_time`
+    </sql>
+
+</mapper>

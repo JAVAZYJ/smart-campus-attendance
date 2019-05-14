@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxzh.smart.campus.attendance.modular.mapper.AttendanceStudentLeaveMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lxzh.smart.campus.attendance.modular.entity.AttendanceStudentLeave">
+        <result column="id" property="id" />
+        <result column="grade_info" property="gradeInfo" />
+        <result column="class_info" property="classInfo" />
+        <result column="class_id" property="classId" />
+        <result column="student_name" property="studentName" />
+        <result column="student_number" property="studentNumber" />
+        <result column="student_id" property="studentId" />
+        <result column="term_id" property="termId" />
+        <result column="leave_start" property="leaveStart" />
+        <result column="leave_end" property="leaveEnd" />
+        <result column="cause_leave" property="causeLeave" />
+        <result column="create_time" property="createTime" />
+        <result column="register_person" property="registerPerson" />
+        <result column="register_id" property="registerId" />
+        <result column="del_flag" property="delFlag" />
+        <result column="leave_state" property="leaveState" />
+        <result column="campus_id" property="campusId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, grade_info, class_info, student_name, student_number, student_id, term_id, cause_leave, create_time, register_person, register_id, del_flag, leave_state, campus_id, leave_start, leave_end, class_id
+    </sql>
+
+</mapper>
