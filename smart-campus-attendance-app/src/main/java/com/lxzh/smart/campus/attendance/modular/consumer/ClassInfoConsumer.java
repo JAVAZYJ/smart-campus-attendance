@@ -2,6 +2,7 @@ package com.lxzh.smart.campus.attendance.modular.consumer;
 
 import com.lxzh.smart.campus.basicinfo.api.ClassInfoApi;
 import com.lxzh.smart.campus.basicinfo.api.model.ClassInfoProvide;
+import com.lxzh.smart.campus.basicinfo.api.model.ClassRoomProvide;
 import feign.hystrix.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public interface ClassInfoConsumer extends ClassInfoApi {
         public ClassInfoConsumer create(Throwable cause) {
             return new ClassInfoConsumer(){
 
+
                 @Override
                 public List<ClassInfoProvide> getRoomNameAndClassName(Long termId, Long[] classIds) {
                     return null;
@@ -32,7 +34,10 @@ public interface ClassInfoConsumer extends ClassInfoApi {
                     return null;
                 }
 
-
+                @Override
+                public ClassRoomProvide getCampusIdByEquipmentId(Long equipmentId) {
+                    return null;
+                }
             };
         }
     }

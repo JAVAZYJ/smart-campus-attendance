@@ -14,51 +14,51 @@ public class CodeGenerateTest {
 
     public static void main(String[] args) {
         GenerateParams generateParams = new GenerateParams();
-        generateParams.setAuthor("zyj");//作者
-        generateParams.setOutputDirectory("D:/Develop/IntelliJ IDEA 2019.1.1/workspaces/smart-campus-attendance/smart-campus-attendance-app/src/main/java");//项目的绝对路径一直到src/main/java为止
-        generateParams.setJdbcDriver("com.mysql.jdbc.Driver");//我使用的5.8以上的版本所有要用这个Driver
-        generateParams.setJdbcUserName("root");//自己的数据库账号
-        generateParams.setJdbcPassword("root");//自己的数据库密码
-        generateParams.setJdbcUrl("jdbc:mysql://localhost:3306/attendance?characterEncoding=utf8&serverTimezone=Asia/Shanghai");
-        generateParams.setParentPackage("com.lxzh.smart.campus.attendance.modular");//生成存放的目录
+        generateParams.setAuthor("huangkai");
+        generateParams.setOutputDirectory("E:\\create");
+        generateParams.setJdbcDriver("com.mysql.jdbc.Driver");
+        generateParams.setJdbcUserName("root");
+        generateParams.setJdbcPassword("123456");
+        generateParams.setJdbcUrl("jdbc:mysql://localhost:3306/smart_campus_basicconfiguration?characterEncoding=utf8");
+        generateParams.setParentPackage("com.lxzh.smart.campus.basicinfo.modular");
         generateParams.setGeneratorInterface(true);
-        //generateParams.setIncludeTables(new String[]{"areas","cities","provinces"});//对应数据库表名进行生成
-        generateParams.setIncludeTables(new String[]{"attendance_teacher_record","attendance_teacher_history"});
+        generateParams.setIncludeTables(new String[]{"score_block"});
         generateParams.setEntityName("%s");
         SimpleGenerator.doGeneration(generateParams);
     }
+
     @Data
     public static class GenerateParams {
 
         //生成代码里，注释的作者
-        private String author = "zyj";
+        private String author = "huangkai";
 
         //代码生成输出的目录，可为项目路径的相对路径
-        private String outputDirectory = "temp";
+        private String outputDirectory = "D:\\basicconfiguration\\smart-campus-basicinfo\\smart-campus-basicinfo-app\\src\\main\\java\\com\\lxzh\\smart\\campus\\basicinfo\\modular";
 
         //jdbc驱动
-        private String jdbcDriver = "com.mysql.cj.jdbc.Driver";
+        private String jdbcDriver = "com.mysql.jdbc.Driver";
 
         //数据库连接地址
-        private String jdbcUrl = "jdbc:mysql://localhost/attendance?serverTimezone=GMT%2B8&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=UTC";
+        private String jdbcUrl = "jdbc:mysql://localhost:3306/smart_campus_basicconfiguration?characterEncoding=utf8";
 
         //数据库账号
         private String jdbcUserName = "root";
 
         //数据库密码
-        private String jdbcPassword = "root";
+        private String jdbcPassword = "123456";
 
         //去掉表的前缀
         private String[] removeTablePrefix = {"xx_"};
 
         //代码生成包含的表，可为空，为空默认生成所有
-        private String[] includeTables;
+        private String[] includeTables={"classes"};
 
         //代码生成的类的父包名称
-        private String parentPackage = "com.lxzh.smart.campus.attendance.modular";
+        private String parentPackage = "com.lxzh.smart.campus.basicinfo.modular";
 
         //service是否生成接口，这个根据自己项目情况决定
-        private Boolean generatorInterface = false;
+        private Boolean generatorInterface = true;
 
         private String entityName;
 
@@ -104,11 +104,11 @@ public class CodeGenerateTest {
             // 策略配置
             StrategyConfig strategy = new StrategyConfig();
             strategy.setCapitalMode(false);
-
+            strategy.setLogicDeleteFieldName("del_flag");
             strategy.setEntityTableFieldAnnotationEnable(true);
 
             // 此处可以移除表前缀表前缀
-            strategy.setTablePrefix(generateParams.getRemoveTablePrefix());
+            //strategy.setTablePrefix(generateParams.getRemoveTablePrefix());
 
             // 表名生成策略
             strategy.setNaming(NamingStrategy.underline_to_camel);
@@ -162,8 +162,9 @@ public class CodeGenerateTest {
         }
 
         public static void main(String[] args) {
-            cn.stylefeng.roses.kernel.generator.SimpleGenerator.doGeneration(new cn.stylefeng.roses.kernel.generator.GenerateParams());
+            doGeneration(new  GenerateParams() );
         }
 
     }
+
 }

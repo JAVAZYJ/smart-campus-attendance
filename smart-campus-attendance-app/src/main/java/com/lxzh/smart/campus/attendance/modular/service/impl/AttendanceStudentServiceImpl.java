@@ -93,6 +93,24 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
     }
 
     /**
+     * 针对每天打一次卡判断的定时器(视为缺勤)
+     */
+    @Scheduled(cron="0 * 23 * * ?")
+    public void studentLeaveCard() {
+        System.out.println("每天放学11点执行：============>>>>>>>" + LocalDateTime.now() + "<<<<<<=============更新缺勤信息");
+        if (LocalDateTimeUtil.sveralWeeks(LocalDateTime.now()) <= 5) {
+            List<AttendanceStudentRecord> lists = recordMapper.selectList(new QueryWrapper<AttendanceStudentRecord>()
+                    .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+            for (AttendanceStudentRecord list : lists){
+                if(list.getClockStartTime().isEqual(list.getClockEndTime())){
+                    list.setType(2L);
+                    recordMapper.update(list,new QueryWrapper<AttendanceStudentRecord>().eq("student_number",list.getStudentNumber()));
+                }
+            }
+        }
+    }
+
+    /**
      * 学校查询校区
      * @param schoolList
      */
@@ -199,6 +217,7 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
     /**
      * 3.显示学生考勤数据
      */
+    @Override
     public Map<String, Map> attendanceDataShow(LocalDateTime localDateTime ,Integer id) {
         Map<String, Map> map = new HashMap();
         if(loginState() != null){
@@ -244,21 +263,20 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
     public Map attendanceSchool(){
         Map<String, List<AttendanceStudentRecord>> map1 = new HashMap();
         Map<String, Integer> map2 = new HashMap();
-        Map<String, List> map3 = new HashMap();
+        Map<String, List> map = new HashMap();
+        Map registerMap = new HashMap();
         List list = new ArrayList();
-        Long schoolId = LoginContext.me().getLoginUser().getSchoolId();
-        List<AttendanceStudentRecord> lateList = recordMapper.selectList( new QueryWrapper<AttendanceStudentRecord>().eq("school_id", schoolId).eq("type", 0L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-        Integer lateCount = recordMapper.selectCount(new QueryWrapper<AttendanceStudentRecord>().eq("school_id", schoolId).eq("type", 0L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        List<AttendanceStudentRecord> lateList = attendanceStudentSchoolType(0L);
+        List<AttendanceStudentRecord> tardyList = attendanceStudentSchoolType(1L);
+        List<AttendanceStudentRecord> absenceList = attendanceStudentSchoolTypes(2L, 3L);
+        Integer lateCount = attendanceStudentSchoolCount(0L);
+        Integer tardyCount  = attendanceStudentSchoolCount(1L);
+        Integer absenceCount = attendanceStudentSchoolCounts(2L,3L);
         map1.put("lateList", lateList);
         map2.put("lateCount", lateCount);
-        List<AttendanceStudentRecord> tardyList = recordMapper.selectList(new QueryWrapper<AttendanceStudentRecord>().eq("school_id", schoolId).eq("type", 1L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-        Integer tardyCount = recordMapper.selectCount(new QueryWrapper<AttendanceStudentRecord>().eq("school_id", schoolId).eq("type", 1L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
         map1.put("tardyList", tardyList);
         map2.put("tardyCount", tardyCount);
-        List<AttendanceStudentRecord> absenceList = recordMapper.selectList(new QueryWrapper<AttendanceStudentRecord>().eq("school_id", schoolId).ge("type", 2L).le("type",3L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-        Integer absenceCount = recordMapper.selectCount(new QueryWrapper<AttendanceStudentRecord>().eq("school_id", schoolId).between("type", 2L,3L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
         List<AttendanceStudentRecord> absenceList1 = new ArrayList<>();
-        Map registerMap = new HashMap();
         boolean leave = false;
         if(!CollectionUtils.isEmpty(leaves())){
             leave = true;
@@ -282,8 +300,8 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
         list.add(map1);
         list.add(map2);
         list.add(registerMap);
-        map3.put("学校",list);
-        return map3;
+        map.put("学校",list);
+        return map;
     }
 
     /**
@@ -300,18 +318,18 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
         if (!CollectionUtils.isEmpty(classList)) {
             for (TeacherClassProvide classes : classList) {
                 List list = new ArrayList();
-                List<AttendanceStudentRecord> lateList = recordMapper.selectList(new QueryWrapper<AttendanceStudentRecord>().eq("class_id", classes.getClassId()).eq("type", 0L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-                Integer lateCount = recordMapper.selectCount(new QueryWrapper<AttendanceStudentRecord>().eq("class_id", classes.getClassId()).eq("type", 0L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-                map1.put("lateList", lateList);
-                map2.put("lateCount", lateCount);
-                List<AttendanceStudentRecord> tardyList = recordMapper.selectList(new QueryWrapper<AttendanceStudentRecord>().eq("class_id", classes.getClassId()).eq("type", 1L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-                Integer tardyCount = recordMapper.selectCount(new QueryWrapper<AttendanceStudentRecord>().eq("class_id", classes.getClassId()).eq("type", 1L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-                map1.put("tardyList", tardyList);
-                map2.put("tardyCount", tardyCount);
-                List<AttendanceStudentRecord> absenceList = recordMapper.selectList(new QueryWrapper<AttendanceStudentRecord>().eq("class_id", classes.getClassId()).ge("type", 2L).le("type",3L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-                Integer absenceCount = recordMapper.selectCount(new QueryWrapper<AttendanceStudentRecord>().eq("class_id", classes.getClassId()).between("type", 2L,3L).eq("term_id", termInfoConsumer.getNowTerm(null).getId()).between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
-                List<AttendanceStudentRecord> absenceList1 = new ArrayList<>();
                 Map registerMap = new HashMap();
+                List<AttendanceStudentRecord> lateList = attendanceStudentClassType(classes.getClassId(),0L);
+                List<AttendanceStudentRecord> tardyList =  attendanceStudentClassType(classes.getClassId(),1L);
+                List<AttendanceStudentRecord> absenceList = attendanceStudentClassTypes(classes.getClassId(),2L,3L);
+                Integer lateCount = attendanceStudentClassCount(classes.getClassId(),0L);
+                Integer tardyCount = attendanceStudentClassCount(classes.getClassId(),1L);
+                Integer absenceCount =  attendanceStudentClassCounts(classes.getClassId(),2L,3L);
+                map1.put("lateList", lateList);
+                map1.put("tardyList", tardyList);
+                map2.put("lateCount", lateCount);
+                map2.put("tardyCount", tardyCount);
+                List<AttendanceStudentRecord> absenceList1 = new ArrayList<>();
                 boolean leave = false;
                 if(!CollectionUtils.isEmpty(leaves())){
                     leave = true;
@@ -339,6 +357,114 @@ public class AttendanceStudentServiceImpl implements AttendanceStudentService {
             }
         }
         return map3;
+    }
+
+    /**
+     * 根据登录用户对应的学校ID获取当前学期全校学生考勤数据集合
+     */
+    public List attendanceStudentSchoolType(Long type){
+        List<AttendanceStudentRecord> list = recordMapper.selectList(
+                new QueryWrapper<AttendanceStudentRecord>()
+                        .eq("school_id", LoginContext.me().getLoginUser().getSchoolId())
+                        .eq("type", type)
+                        .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                        .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        return list;
+    }
+
+    /**
+     * 根据登录用户对应的学校ID获取当前学期全校学生缺勤数据集合
+     */
+    public List attendanceStudentSchoolTypes(Long var1,Long var2){
+        List<AttendanceStudentRecord> absenceList = recordMapper.selectList(
+                new QueryWrapper<AttendanceStudentRecord>()
+                        .eq("school_id", LoginContext.me().getLoginUser().getSchoolId())
+                        .ge("type", var1).le("type",var2)
+                        .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                        .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        return absenceList;
+    }
+
+    /**
+     * 根据登录用户对应的学校ID获取当前学期全校学生考勤数据统计
+     */
+    public Integer attendanceStudentSchoolCount(Long type){
+        Integer integer = recordMapper.selectCount(
+                new QueryWrapper<AttendanceStudentRecord>()
+                        .eq("school_id", LoginContext.me().getLoginUser().getSchoolId())
+                        .eq("type", type)
+                        .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                        .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        return integer;
+    }
+
+    /**
+     * 根据登录用户对应的学校ID获取当前学期全校学生缺勤数据统计
+     */
+    public Integer attendanceStudentSchoolCounts(Long var1,Long var2){
+        Integer integer = recordMapper.selectCount(
+                new QueryWrapper<AttendanceStudentRecord>()
+                        .eq("school_id", LoginContext.me().getLoginUser().getSchoolId())
+                        .ge("type", var1).le("type",var2)
+                        .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                        .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        return integer;
+    }
+
+    /**
+     * 根据登录用户对应的班级ID获取考勤数据的集合
+     */
+    public List attendanceStudentClassType(Long classesId,Long type){
+        List<AttendanceStudentRecord> list = recordMapper.selectList(
+                new QueryWrapper<AttendanceStudentRecord>()
+                        .eq("class_id", classesId)
+                        .eq("type", type)
+                        .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                        .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        return list;
+    }
+
+    /**
+     * 根据登录用户对应的班级ID获取考勤数据的集合
+     */
+    public Integer attendanceStudentClassCount(Long classesId,Long type){
+        Integer integer = recordMapper.selectCount(
+                new QueryWrapper<AttendanceStudentRecord>()
+                        .eq("class_id", classesId)
+                        .eq("type", type)
+                        .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                        .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+        return integer;
+    }
+
+    /**
+     * 根据登录用户对应的班级ID获取缺勤数据的集合
+     */
+    public List attendanceStudentClassTypes(Long classesId,Long var1,Long var2){
+        List<AttendanceStudentRecord> absenceList =
+                recordMapper.selectList(
+                        new QueryWrapper<AttendanceStudentRecord>()
+                                .eq("class_id", classesId)
+                                .ge("type", var1).le("type",var2)
+                                .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                                .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+
+        return absenceList;
+    }
+
+    /**
+     * 根据登录用户对应的班级ID获取缺勤数据的集合
+     */
+    public Integer attendanceStudentClassCounts(Long classesId,Long var1,Long var2){
+        Integer integer =
+                recordMapper.selectCount(
+                        new QueryWrapper<AttendanceStudentRecord>()
+                                .eq("class_id", classesId)
+                                .ge("type", var1).le("type",var2)
+                                .eq("term_id", termInfoConsumer.getNowTerm(null).getId())
+                                .between("create_time", LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX)));
+
+        return integer;
     }
 
     /**

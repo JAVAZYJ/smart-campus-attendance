@@ -1,15 +1,11 @@
 package com.lxzh.smart.campus.attendance.modular.controller;
 
 import com.lxzh.smart.campus.attendance.modular.dto.AttendanceLeaveDTO;
-import com.lxzh.smart.campus.attendance.modular.util.LocalDateTimeUtil;
 import com.lxzh.smart.campus.attendance.modular.vo.ClockInVO;
 import com.lxzh.smart.campus.attendance.modular.dto.LeaveDeleteDTO;
 import com.lxzh.smart.campus.attendance.modular.entity.AttendanceStudentLeave;
-import com.lxzh.smart.campus.attendance.modular.entity.AttendanceStudentRecord;
 import com.lxzh.smart.campus.attendance.modular.service.AttendanceStudentService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +32,7 @@ public class AttendanceStudentController {
      */
     @PostMapping("/clock_in")
     @ApiOperation(value = "学生考勤打卡", notes = "学生考勤打卡")
-    public Integer attendance(@RequestBody ClockInVO clockInDTO) throws Exception {
+    public Integer attendance(@RequestBody ClockInVO clockInDTO){
         clockInDTO.setNumber(1125210159732473857L);
         clockInDTO.setClockInTime(LocalDateTime.now());
         clockInDTO.setEquipmentId(1L);
